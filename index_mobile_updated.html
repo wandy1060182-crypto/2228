@@ -1,0 +1,2729 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浪下真相</title>
+
+    <style>
+        /* ===== 基本設定：保留原設定 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+            background-color: #f0faff;
+        }
+
+        @font-face {
+            font-family: "我的網站字體";
+            src: url("rounded-l-mgenplus-2c-heavy.ttf") format("truetype");
+        }
+
+        /* ===== 頂部導覽列 ===== */
+        .navbar {
+            height: 70px;
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .logo {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo img {
+            height: 198px;
+            width: auto;
+            display: block;
+        }
+
+        /* ===== 漢堡按鈕 ===== */
+        .menu-btn {
+            position: absolute;
+            right: 30px;
+            width: 45px;
+            height: 45px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .menu-btn span {
+            width: 25px;
+            height: 3px;
+            background-color: #1d5963;
+            border-radius: 3px;
+            transition: 0.3s;
+        }
+
+        /* ===== 地圖滿版：保留原設定 ===== */
+        iframe {
+            display: block;
+            width: 100%;
+            height: calc(100vh - 70px);
+            border: none;
+        }
+
+        /* ===== 側邊選單 ===== */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 320px;
+            height: 100vh;
+            background-color: #ffffff;
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+            transition: right 0.3s ease;
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .side-menu.active {
+            right: 0;
+        }
+
+        .menu-header {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .menu-header h2 {
+            font-size: 20px;
+            color: #1d5963;
+        }
+
+        .close-btn {
+            font-size: 30px;
+            color: #555;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-list {
+            list-style: none;
+            padding: 15px 0;
+        }
+
+        .menu-list li {
+            width: 100%;
+        }
+
+        .menu-list a,
+        .submenu-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 25px;
+            color: #1d5963;
+            text-decoration: none;
+            font-size: 17px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .menu-list a:hover,
+        .submenu-btn:hover {
+            background-color: #edf5f5;
+            color: #1d5963;
+        }
+
+        .submenu {
+            list-style: none;
+            background-color: #f7fafa;
+            display: none;
+        }
+
+        .submenu.active {
+            display: block;
+        }
+
+        .submenu li a {
+            padding: 13px 25px 13px 45px;
+            font-size: 15px;
+            color: #555;
+        }
+
+        .submenu li a:hover {
+            background-color: #e8f1f1;
+            color: #1d5963;
+        }
+
+        .arrow {
+            font-size: 14px;
+            transition: transform 0.3s;
+        }
+
+        .submenu-btn.active .arrow {
+            transform: rotate(180deg);
+        }
+
+        /* ===== 遮罩 ===== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.35);
+            display: none;
+            z-index: 1500;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* ===== 手機版導覽列 ===== */
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 0 18px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .img {
+                height: 19px;
+            }
+
+            .side-menu {
+                width: 280px;
+            }
+        }
+
+        /* ===== 頂部共用輪播：主視覺與測驗各自獨立成一張 ===== */
+        .top-feature-carousel { position: relative; width: 100%; overflow: hidden; background: #d2e9ff; }
+        .top-feature-viewport { width: 100%; overflow: hidden; }
+        .top-feature-track { display: flex; width: 100%; transition: transform .65s ease; will-change: transform; }
+        .top-feature-slide { flex: 0 0 100%; min-width: 100%; position: relative; }
+        .top-feature-slide .home-hero { width: 100%; }
+        .top-feature-quiz-slide {
+            min-height: 560px; height: calc(100vh - 70px); max-height: 850px;
+            display: flex; align-items: center; justify-content: center; padding: 60px 24px 88px;
+            background: linear-gradient(135deg, #d2e9ff 0%, #effaff 55%, #c8e8f5 100%);
+            position: relative; isolation: isolate;
+        }
+        .top-feature-quiz-slide::before, .top-feature-quiz-slide::after {
+            content: ""; position: absolute; border-radius: 50%; z-index: -1; background: rgba(255,255,255,.45);
+        }
+        .top-feature-quiz-slide::before { width: 300px; height: 300px; left: 8%; top: 10%; }
+        .top-feature-quiz-slide::after { width: 210px; height: 210px; right: 10%; bottom: 9%; }
+        .top-feature-quiz-card {
+            width: min(520px, 92%); padding: 36px 42px; border: 1px solid rgba(255,255,255,.9);
+            border-radius: 30px; background: rgba(255,255,255,.88); box-shadow: 0 20px 55px rgba(36,87,121,.14);
+            text-align: center; color: #245779; backdrop-filter: blur(8px);
+        }
+        .top-feature-quiz-kicker { margin-bottom: 15px; color: #6b9ab1; font-size: 11px; font-weight: 800; letter-spacing: 3px; }
+        .top-feature-quiz-icon { width: 145px; height: 145px; margin: 0 auto 18px; border-radius: 50%; background: #e4f5ff; display: flex; align-items: center; justify-content: center; }
+        .top-feature-quiz-icon img { width: 90%; height: 90%; object-fit: contain; animation: quizIllustrationFloat 3.8s ease-in-out infinite; }
+        .top-feature-quiz-card h2 { margin-bottom: 12px; color: #1d5963; font-family: "我的網站字體", "Noto Sans TC", sans-serif; font-size: clamp(25px, 3vw, 36px); }
+        .top-feature-quiz-card p { max-width: 390px; margin: 0 auto 24px; color: #62849a; font-size: 15px; line-height: 1.9; }
+        .top-feature-quiz-link { display: inline-flex; gap: 9px; align-items: center; padding: 13px 24px; border-radius: 999px; background: #1d5963; color: #fff; text-decoration: none; font-size: 14px; font-weight: 700; transition: transform .2s ease, background .2s ease; }
+        .top-feature-quiz-link:hover { background: #3185b9; transform: translateY(-2px); }
+        .top-feature-controls { position: absolute; z-index: 20; right: clamp(20px, 5vw, 70px); bottom: 20px; display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,.86); box-shadow: 0 4px 18px rgba(36,87,121,.12); }
+        .top-feature-controls > button { width: 32px; height: 32px; border: 1px solid #c3e8ff; border-radius: 50%; background: #fff; color: #1d5963; font-size: 23px; line-height: 1; cursor: pointer; }
+        .top-feature-dots { display: flex; align-items: center; gap: 8px; }
+        .top-feature-dot { width: 9px; height: 9px; padding: 0; border: 0; border-radius: 50%; background: #b8d5e4; cursor: pointer; transition: width .2s, background .2s; }
+        .top-feature-dot.active { width: 24px; border-radius: 999px; background: #1d5963; }
+        @media (max-width: 600px) {
+            .top-feature-quiz-slide { min-height: 560px; height: calc(100svh - 70px); padding: 38px 16px 88px; }
+            .top-feature-quiz-card { padding: 28px 22px; }
+            .top-feature-quiz-icon { width: 112px; height: 112px; }
+            .top-feature-quiz-card p { font-size: 14px; }
+            .top-feature-controls { right: 50%; transform: translateX(50%); bottom: 14px; }
+        }
+        @media (max-width: 768px) {
+            .hero-shrimp-extra { width: 58px; right: 2%; bottom: 12px; }
+            .fisheries-clam-extra { width: 52px; left: 1%; bottom: 8px; }
+            .fisheries-fish-extra { width: 48px; right: 1%; bottom: 8px; }
+            .quiz-shrimp-extra { width: 54px; left: 1%; top: 14px; }
+            .quiz-clam-extra { width: 50px; right: 1%; bottom: 8px; }
+            .documentary-clam-extra { width: 48px; left: 1%; bottom: 10px; }
+            .documentary-roe-extra { width: 54px; right: 1%; bottom: 10px; }
+        }
+        @media (max-width: 420px) {
+            .hero-shrimp-extra { width: 44px; right: 1%; bottom: 8px; }
+            .fisheries-clam-extra, .documentary-clam-extra { width: 40px; }
+            .fisheries-fish-extra { width: 38px; }
+            .quiz-shrimp-extra { width: 42px; }
+            .quiz-clam-extra { width: 40px; }
+            .documentary-roe-extra { width: 42px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .top-feature-track, .top-feature-quiz-icon img { transition: none; animation: none; }
+        }
+
+        /* ==================================================
+           第一個首頁版塊：滿版圖片＋主標題
+           ================================================== */
+        .home-hero {
+            position: relative;
+            isolation: isolate;
+            width: 100%;
+            min-height: 560px;
+            height: calc(100vh - 70px);
+            max-height: 850px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            background: #B5EBFF;
+        }
+
+        .hero-image-wrap {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #B5EBFF;
+        }
+
+        .hero-image-wrap::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to right,
+                #B5EBFF 0%,
+                rgba(210, 233, 255, 0.7) 40%,
+                transparent 100%
+            );
+        }
+
+        .hero-image {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transform: scale(1.015);
+        }
+
+        /* ===== 蛤蠣插圖 ===== */
+        .clam-illustration {
+            width: 110px;
+            top: 35px;
+            right: 5%;
+            animation-duration: 5s;
+            animation-delay: 0.3s;
+        }
+
+        /* ===== 首頁文字區塊 ===== */
+        .hero-copy {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            width: min(58%, 760px);
+            min-width: 0;
+            margin-right: auto;
+            padding: 52px clamp(28px, 7vw, 110px);
+            color: #245779;
+            text-decoration: none;
+            cursor: pointer;
+            animation: heroFloat 5s ease-in-out infinite;
+            transition: filter 0.3s ease;
+            outline-offset: 8px;
+        }
+
+        .hero-copy:hover {
+            filter: drop-shadow(0 8px 18px rgba(36, 87, 121, 0.15));
+        }
+
+        .hero-copy:focus-visible {
+            outline: 3px solid #3979A8;
+            border-radius: 8px;
+        }
+
+        .hero-site-name {
+            display: inline-block;
+            margin-bottom: 24px;
+            padding: 8px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: #3979A8;
+            background: rgba(255, 255, 255, 0.58);
+            backdrop-filter: blur(5px);
+        }
+
+        .hero-copy h1 {
+            margin-bottom: 22px;
+            font-family: "我的網站字體", "Noto Sans TC", sans-serif;
+            font-size: clamp(30px, 4vw, 54px);
+            line-height: 1.4;
+            letter-spacing: 2px;
+            color: #245779;
+            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.18);
+        }
+
+        .hero-copy p {
+            max-width: 560px;
+            font-size: 15px;
+            line-height: 2.05;
+            letter-spacing: 0.5px;
+            color: #355E79;
+            text-shadow: none;
+        }
+
+        .hero-read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 28px;
+            padding-bottom: 7px;
+            border-bottom: 1px solid rgba(36, 87, 121, 0.55);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #245779;
+        }
+
+        .hero-read-more span {
+            display: inline-block;
+            font-size: 20px;
+            color: #245779;
+            transition: transform 0.25s ease;
+        }
+
+        .hero-copy:hover .hero-read-more span {
+            transform: translateX(5px);
+        }
+
+        @keyframes heroFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+
+        /* ===== 主視覺旁的測驗自動輪播 ===== */
+        .hero-quiz {
+            position: absolute;
+            z-index: 5;
+            right: clamp(24px, 5.5vw, 82px);
+            top: 50%;
+            transform: translateY(-50%);
+            width: min(31%, 390px);
+            padding: 24px 24px 18px;
+            border: 1px solid rgba(255,255,255,.82);
+            border-radius: 26px;
+            background: rgba(255,255,255,.82);
+            box-shadow: 0 18px 45px rgba(36,87,121,.17);
+            backdrop-filter: blur(10px);
+            color: #245779;
+            overflow: hidden;
+        }
+        .hero-quiz-topline {
+            margin-bottom: 14px;
+            color: #62849a;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-align: center;
+        }
+        .hero-quiz-window { overflow: hidden; }
+        .hero-quiz-track {
+            display: flex;
+            transition: transform .6s ease;
+            will-change: transform;
+        }
+        .hero-quiz-slide {
+            flex: 0 0 100%;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 4px 8px 8px;
+        }
+        .hero-quiz-icon {
+            width: 92px;
+            height: 92px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 13px;
+            border-radius: 50%;
+            background: #e4f5ff;
+        }
+        .hero-quiz-icon img {
+            width: 88%;
+            height: 88%;
+            object-fit: contain;
+            animation: quizIllustrationFloat 3.8s ease-in-out infinite;
+        }
+        .hero-quiz-slide:nth-child(2) .hero-quiz-icon img { animation-delay: .4s; }
+        .hero-quiz-kicker {
+            margin-bottom: 7px;
+            color: #6b9ab1;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.6px;
+        }
+        .hero-quiz-slide h2 {
+            margin-bottom: 9px;
+            color: #1d5963;
+            font-family: "我的網站字體", "Noto Sans TC", sans-serif;
+            font-size: clamp(20px, 1.8vw, 25px);
+            line-height: 1.45;
+        }
+        .hero-quiz-slide p {
+            min-height: 58px;
+            margin-bottom: 15px;
+            color: #62849a;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+        .hero-quiz-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: #1d5963;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform .2s ease, background .2s ease;
+        }
+        .hero-quiz-link:hover { background: #3185b9; transform: translateY(-2px); }
+        .hero-quiz-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+        }
+        .hero-quiz-controls > button {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #c3e8ff;
+            border-radius: 50%;
+            background: #fff;
+            color: #1d5963;
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+        }
+        .hero-quiz-dots { display: flex; gap: 8px; align-items: center; }
+        .hero-quiz-dot {
+            width: 8px;
+            height: 8px;
+            padding: 0;
+            border: 0;
+            border-radius: 50%;
+            background: #b7d4e3;
+            cursor: pointer;
+        }
+        .hero-quiz-dot.active { background: #1d5963; transform: scale(1.25); }
+
+        /* ===== 手機版主視覺 ===== */
+        @media (max-width: 1000px) and (min-width: 801px) {
+            .hero-copy { width: 57%; padding-left: 5%; padding-right: 3%; }
+            .hero-quiz { right: 3%; width: 35%; padding: 20px 17px 15px; }
+            .hero-quiz-icon { width: 76px; height: 76px; }
+            .hero-quiz-slide p { font-size: 12px; }
+        }
+
+        @media (max-width: 800px) {
+            .home-hero {
+                height: auto;
+                min-height: 1040px;
+                max-height: none;
+                align-items: flex-start;
+            }
+
+            .hero-image-wrap {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+            .hero-image-wrap::after {
+                background: linear-gradient(
+                    0deg,
+                    rgba(210, 233, 255, 0.97) 0%,
+                    rgba(210, 233, 255, 0.86) 42%,
+                    rgba(210, 233, 255, 0.42) 75%,
+                    rgba(210, 233, 255, 0.05) 100%
+                );
+            }
+
+            .hero-copy {
+                width: 100%;
+                max-width: none;
+                margin: 0;
+                padding: 240px 7% 30px;
+                animation-duration: 6s;
+            }
+
+            .hero-copy h1 {
+                font-size: clamp(27px, 7vw, 36px);
+                margin-bottom: 15px;
+            }
+
+            .hero-copy p {
+                max-width: 100%;
+                font-size: 14px;
+                line-height: 1.9;
+            }
+
+            .hero-site-name {
+                font-size: 13px;
+                margin-bottom: 17px;
+            }
+
+            .hero-read-more {
+                margin-top: 22px;
+            }
+
+            .hero-quiz {
+                top: auto;
+                right: 6%;
+                bottom: 34px;
+                left: 6%;
+                width: 88%;
+                max-width: 440px;
+                margin: 0 auto;
+                padding: 18px 20px 14px;
+                transform: none;
+            }
+            .hero-quiz-icon { width: 72px; height: 72px; margin-bottom: 9px; }
+            .hero-quiz-slide h2 { font-size: 22px; }
+            .hero-quiz-slide p { min-height: auto; margin-bottom: 12px; }
+            .clam-illustration {
+                width: 72px;
+                top: 18px;
+                right: 5%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero-copy {
+                animation: none;
+            }
+
+            .hero-read-more span {
+                transition: none;
+            }
+        }
+
+        /* ==================================================
+           第二個首頁版塊：縣市報導分類
+           ================================================== */
+        .fisheries-section {
+            position: relative;
+            isolation: isolate;
+            width: 100%;
+            padding: 76px 8% 82px;
+            background: #f0faff;
+            text-align: center;
+        }
+
+        .fisheries-text,
+        .fisheries-cards {
+            position: relative;
+            z-index: 2;
+        }
+
+        .fisheries-label {
+            margin-bottom: 12px;
+            color: #62849a;
+            font-size: 15px;
+            letter-spacing: 4px;
+        }
+
+        .fisheries-title {
+            margin-bottom: 15px;
+            color: #1d5963;
+            font-family: inherit;
+            font-size: 42px;
+            line-height: 1.4;
+        }
+
+        .fisheries-description {
+            max-width: 680px;
+            margin: 0 auto 42px;
+            color: #62849a;
+            font-family: inherit;
+            font-size: 17px;
+            line-height: 1.8;
+        }
+
+        .fisheries-cards {
+            width: 100%;
+            max-width: 1080px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 28px;
+            align-items: start;
+        }
+
+        .fisheries-card {
+            min-width: 0;
+            text-align: center;
+        }
+
+        .county-link {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* ===== 分類裝飾框：照片在底層，PNG 框在上層 ===== */
+        .county-image-wrap {
+            position: relative;
+            isolation: isolate;
+            width: min(100%, 205px);
+            /* 框圖原始畫布是橫式比例，保留完整比例避免框被擠壓 */
+            aspect-ratio: 3 / 2;
+            margin: 0 auto 18px;
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            background: transparent;
+            box-shadow: none;
+            overflow: visible;
+            transition: transform 0.28s ease;
+        }
+
+        /* 框圖完整顯示在照片上方，不裁切、不拉伸 */
+        .county-image-wrap .county-frame {
+            position: absolute;
+            inset: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+            border-radius: 0;
+            z-index: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* ===== 四張框圖獨立調整：每張都能分別設定大小、左右位置、上下位置 ===== */
+        /* 調整方式：--frame-scale 控制大小；--frame-x 控制左右；--frame-y 控制上下 */
+        .county-image-wrap .county-frame {
+            transform: translate(var(--frame-x, 0px), var(--frame-y, 0px)) scale(var(--frame-scale, 1));
+            transform-origin: center center;
+        }
+
+        /* 烏魚子框圖：以下三個數值可獨立修改 */
+        .frame-roe {
+            --frame-scale: 2.50; /* 大小：1 = 原始大小，1.10 = 放大 10% */
+            --frame-x: 0px;      /* 左右：正數往右，負數往左 */
+            --frame-y: 0px;      /* 上下：正數往下，負數往上 */
+        }
+
+        /* 蛤蠣框圖 */
+        .frame-clam {
+            --frame-scale: 2.55;
+            --frame-x: -9px;
+            --frame-y: -5px;
+        }
+
+        /* 蝦子框圖 */
+        .frame-shrimp {
+            --frame-scale: 2.50;
+            --frame-x: 0px;
+            --frame-y: -2px;
+        }
+
+        /* 魚框圖 */
+        .frame-fish {
+            --frame-scale: 2.50;
+            --frame-x: 15px;
+            --frame-y: 5px;
+        }
+
+        .county-link:hover .county-image-wrap {
+            transform: translateY(-6px) rotate(-2deg) scale(1.03);
+        }
+
+        .fisheries-card h3 {
+            margin-bottom: 8px;
+            color: #1d5963;
+            font-family: "我的網站字體", "Noto Sans TC", sans-serif;
+            font-size: 21px;
+        }
+
+        .fisheries-card p {
+            color: #62849a;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        /* ===== 蝦子插圖 ===== */
+        .shrimp-illustration {
+            width: 165px;
+            top: 20px;
+            right: 2.5%;
+            animation-duration: 4.2s;
+            animation-delay: 0.9s;
+        }
+
+        /* ===== 烏魚子插圖：移至測驗區左下角 ===== */
+        .roe-illustration {
+            width: 112px;
+            left: 2.5%;
+            bottom: 20px;
+            animation-duration: 5.2s;
+            animation-delay: 0.7s;
+        }
+
+        @media (max-width: 800px) {
+            .fisheries-section {
+                padding: 60px 7%;
+            }
+
+            .fisheries-title {
+                font-size: 32px;
+            }
+
+            .fisheries-description {
+                font-size: 15px;
+                line-height: 1.8;
+                margin-bottom: 32px;
+            }
+
+            .fisheries-cards {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 30px 18px;
+            }
+
+            .county-image-wrap {
+                width: min(100%, 170px);
+            }
+
+            .shrimp-illustration {
+                width: 90px;
+                top: 8px;
+                right: 2%;
+            }
+
+            .roe-illustration {
+                width: 65px;
+                left: 1%;
+                bottom: 8px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .fisheries-cards {
+                gap: 26px 12px;
+            }
+
+            .fisheries-card h3 {
+                font-size: 18px;
+            }
+
+            .shrimp-illustration {
+                width: 68px;
+                top: 8px;
+                right: 1%;
+            }
+
+            .roe-illustration {
+                width: 55px;
+                left: 1%;
+            }
+        }
+
+        /* ==================================================
+           新增區塊：測驗自動輪播
+           不改動原本其他版塊的設定
+           ================================================== */
+        .quiz-section {
+            position: relative;
+            isolation: isolate;
+            width: 100%;
+            padding: 76px 8% 78px;
+            background: #e7f6ff;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .quiz-heading {
+            position: relative;
+            z-index: 2;
+            margin-bottom: 35px;
+        }
+
+        .quiz-en-title {
+            margin-bottom: 10px;
+            color: #62849a;
+            font-size: 15px;
+            letter-spacing: 4px;
+        }
+
+        .quiz-heading h2 {
+            margin-bottom: 15px;
+            color: #1d5963;
+            font-family: "我的網站字體", "Noto Sans TC", sans-serif;
+            font-size: 42px;
+            line-height: 1.4;
+        }
+
+        .quiz-heading p {
+            color: #62849a;
+            font-size: 16px;
+            line-height: 1.9;
+        }
+
+        .quiz-carousel {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 60px;
+        }
+
+        .quiz-viewport {
+            overflow: hidden;
+            border-radius: 24px;
+        }
+
+        .quiz-track {
+            display: flex;
+            align-items: stretch;
+            transition: transform 0.65s ease;
+            will-change: transform;
+        }
+
+        .quiz-slide {
+            flex: 0 0 100%;
+            min-width: 0;
+            padding: 12px;
+        }
+
+        .quiz-card {
+            position: relative;
+            min-height: 310px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 35px;
+            border: 2px solid rgba(195, 232, 255, 0.9);
+            border-radius: 24px;
+            background: #ffffff;
+            box-shadow: 0 12px 30px rgba(69, 146, 185, 0.12);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .quiz-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 35px rgba(69, 146, 185, 0.18);
+        }
+
+        .quiz-card::before,
+        .quiz-card::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .quiz-card::before {
+            width: 180px;
+            height: 180px;
+            top: -85px;
+            right: -45px;
+            background: rgba(195, 232, 255, 0.35);
+        }
+
+        .quiz-card::after {
+            width: 130px;
+            height: 130px;
+            bottom: -65px;
+            left: -35px;
+            background: rgba(181, 235, 255, 0.35);
+        }
+
+        .quiz-icon {
+            position: relative;
+            z-index: 1;
+            width: 78px;
+            height: 78px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 17px;
+            border-radius: 50%;
+            background: #e4f5ff;
+            font-size: 40px;
+            transition: transform 0.35s ease;
+        }
+
+        .quiz-icon img {
+            display: block;
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+            animation: quizIllustrationFloat 3.8s ease-in-out infinite;
+        }
+
+        .quiz-slide:nth-child(2) .quiz-icon img {
+            animation-delay: 0.45s;
+        }
+
+        @keyframes quizIllustrationFloat {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-5px) rotate(3deg); }
+        }
+
+        .quiz-card:hover .quiz-icon {
+            transform: translateY(-4px) rotate(-5deg);
+        }
+
+        .quiz-card h3 {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 12px;
+            color: #1d5963;
+            font-family: "我的網站字體", "Noto Sans TC", sans-serif;
+            font-size: 28px;
+            line-height: 1.5;
+        }
+
+        .quiz-card p {
+            position: relative;
+            z-index: 1;
+            max-width: 500px;
+            margin-bottom: 25px;
+            color: #62849a;
+            font-size: 16px;
+            line-height: 1.9;
+        }
+
+        .quiz-link {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-width: 170px;
+            padding: 13px 25px;
+            border-radius: 999px;
+            background: #1d5963;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background 0.25s ease, transform 0.25s ease;
+        }
+
+        .quiz-link:hover {
+            background: #3185b9;
+            transform: translateY(-2px);
+        }
+
+        .quiz-link span {
+            font-size: 20px;
+            transition: transform 0.25s ease;
+        }
+
+        .quiz-link:hover span {
+            transform: translateX(4px);
+        }
+
+        /* ===== 測驗輪播左右按鈕 ===== */
+        .quiz-arrow {
+            position: absolute;
+            top: 50%;
+            z-index: 5;
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #c3e8ff;
+            border-radius: 50%;
+            background: #ffffff;
+            color: #1d5963;
+            font-size: 25px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(29, 89, 99, 0.12);
+            transform: translateY(-50%);
+            transition: background 0.25s ease, color 0.25s ease;
+        }
+
+        .quiz-arrow:hover {
+            background: #1d5963;
+            color: #ffffff;
+        }
+
+        .quiz-prev {
+            left: 0;
+        }
+
+        .quiz-next {
+            right: 0;
+        }
+
+        /* ===== 測驗輪播圓點 ===== */
+        .quiz-dots {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 11px;
+            margin-top: 26px;
+        }
+
+        .quiz-dot {
+            width: 10px;
+            height: 10px;
+            padding: 0;
+            border: none;
+            border-radius: 50%;
+            background: #b7d4e3;
+            cursor: pointer;
+            transition: background 0.25s ease, transform 0.25s ease;
+        }
+
+        .quiz-dot.active {
+            background: #1d5963;
+            transform: scale(1.35);
+        }
+
+        .quiz-hint {
+            position: relative;
+            z-index: 2;
+            margin-top: 17px;
+            color: #62849a;
+            font-size: 13px;
+        }
+
+        /* ===== 測驗區手機版 ===== */
+        @media (max-width: 800px) {
+            .quiz-section {
+                padding: 60px 5% 62px;
+            }
+
+            .quiz-heading h2 {
+                font-size: 32px;
+            }
+
+            .quiz-heading p {
+                font-size: 15px;
+            }
+
+            .quiz-carousel {
+                padding: 0 38px;
+            }
+
+            .quiz-card {
+                min-height: 320px;
+                padding: 35px 20px;
+            }
+
+            .quiz-card h3 {
+                font-size: 24px;
+            }
+
+            .quiz-card p {
+                font-size: 14px;
+            }
+
+            .quiz-arrow {
+                width: 36px;
+                height: 36px;
+                font-size: 21px;
+            }
+
+            .quiz-icon {
+                width: 68px;
+                height: 68px;
+                font-size: 34px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .quiz-carousel {
+                padding: 0 30px;
+            }
+
+            .quiz-card {
+                min-height: 330px;
+                padding: 30px 16px;
+            }
+
+            .quiz-card h3 {
+                font-size: 21px;
+            }
+
+            .quiz-link {
+                min-width: 150px;
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            .quiz-arrow {
+                width: 30px;
+                height: 30px;
+                font-size: 18px;
+            }
+        }
+
+        /* ==================================================
+           第三板塊：新聞報導
+           ================================================== */
+        .documentary-section {
+            background: #f0faff;
+            padding: 50px 8%;
+            text-align: center;
+            position: relative;
+            isolation: isolate;
+        }
+
+        .documentary-title,
+        .video-carousel,
+        .video-dots,
+        .documentary-btn {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ===== 魚插圖 ===== */
+        .fish-illustration {
+            width: 105px;
+            top: 28px;
+            right: 3%;
+            transform-origin: center;
+            animation-duration: 3.8s;
+            animation-delay: 1s;
+        }
+
+        .documentary-title {
+            margin-bottom: 0;
+        }
+
+        .documentary-title .en-title {
+            font-size: 18px;
+            letter-spacing: 4px;
+            color: #62849a;
+            margin-bottom: 10px;
+        }
+
+        .documentary-title h2 {
+            font-size: 42px;
+            margin: 0 0 15px;
+            color: #1d5963;
+        }
+
+        .documentary-title p {
+            font-size: 17px;
+            color: #62849a;
+            line-height: 1.8;
+        }
+
+        /* ===== 影片輪播 ===== */
+        .video-carousel {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-container {
+            width: 85%;
+            overflow: hidden;
+            border-radius: 16px;
+            background: #000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .video-slide {
+            display: none;
+        }
+
+        .video-slide.active {
+            display: block;
+        }
+
+        .video-slide iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            display: block;
+            border: none;
+        }
+
+        .video-arrow {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: #ffffff;
+            color: #1d5963;
+            font-size: 28px;
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 5;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: 0.3s;
+        }
+
+        .video-arrow:hover {
+            background: #1d5963;
+            color: #fff;
+        }
+
+        .video-prev {
+            left: 0;
+        }
+
+        .video-next {
+            right: 0;
+        }
+
+        .video-info {
+            margin-top: 25px;
+        }
+
+        .video-info h3 {
+            font-size: 26px;
+            margin-bottom: 10px;
+            color: #1d5963;
+        }
+
+        .video-info p {
+            color: #62849a;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        .video-dots {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .video-dot {
+            width: 10px;
+            height: 10px;
+            border: none;
+            padding: 0;
+            border-radius: 50%;
+            background: #ccc;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .video-dot.active {
+            background: #1d5963;
+            transform: scale(1.2);
+        }
+
+        .documentary-btn {
+            display: inline-block;
+            margin-top: 35px;
+            padding: 13px 30px;
+            background: #1d5963;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: 0.3s;
+        }
+
+        .documentary-btn:hover {
+            background: #3185b9;
+        }
+
+        @media (max-width: 768px) {
+            .documentary-section {
+                padding: 70px 5%;
+            }
+
+            .documentary-title h2 {
+                font-size: 32px;
+            }
+
+            .documentary-title p {
+                font-size: 15px;
+            }
+
+            .fish-illustration {
+                width: 60px;
+                top: 12px;
+                right: 3%;
+            }
+
+            .video-container {
+                width: 82%;
+            }
+
+            .video-arrow {
+                width: 42px;
+                height: 42px;
+                font-size: 22px;
+            }
+
+            .video-prev {
+                left: 0;
+            }
+
+            .video-next {
+                right: 0;
+            }
+
+            .video-info h3 {
+                font-size: 22px;
+            }
+
+            .video-info p {
+                font-size: 14px;
+            }
+        }
+
+        /* ==================================================
+           海洋插圖共用設定：漂浮＋微旋轉
+           ================================================== */
+        .floating-illustration {
+            position: absolute;
+            height: auto;
+            object-fit: contain;
+            pointer-events: none;
+            user-select: none;
+            z-index: 1;
+            animation: sea-float 4.5s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        /* ===== 額外海洋插圖：錯落分布，尺寸與角度做變化 ===== */
+        .hero-shrimp-extra {
+            width: 92px; right: 3%; bottom: 24px; top: auto;
+            animation-duration: 4.8s; animation-delay: 1.2s;
+            transform: rotate(12deg);
+        }
+        .fisheries-clam-extra {
+            width: 82px; left: 2.8%; bottom: 18px; top: auto; right: auto;
+            animation-duration: 5.3s; animation-delay: .4s;
+        }
+        .fisheries-fish-extra {
+            width: 74px; right: 4%; bottom: 24px; top: auto;
+            animation-duration: 4.1s; animation-delay: 1.5s;
+            transform: rotate(-10deg);
+        }
+        .quiz-shrimp-extra {
+            width: 86px; left: 3%; top: 24px; right: auto;
+            animation-duration: 4.6s; animation-delay: .8s;
+            transform: rotate(-14deg);
+        }
+        .quiz-clam-extra {
+            width: 78px; right: 3%; bottom: 18px; left: auto; top: auto;
+            animation-duration: 5.1s; animation-delay: 1.1s;
+        }
+        .documentary-clam-extra {
+            width: 76px; left: 3%; bottom: 24px; top: auto; right: auto;
+            animation-duration: 4.7s; animation-delay: .6s;
+        }
+        .documentary-roe-extra {
+            width: 84px; right: 3%; bottom: 22px; top: auto;
+            animation-duration: 5.4s; animation-delay: 1.3s;
+            transform: rotate(9deg);
+        }
+
+        @keyframes sea-float {
+            0%, 100% {
+                transform: translateY(0) rotate(-4deg);
+            }
+
+            50% {
+                transform: translateY(-12px) rotate(4deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            @keyframes sea-float {
+                0%, 100% {
+                    transform: translateY(0) rotate(-3deg);
+                }
+
+                50% {
+                    transform: translateY(-8px) rotate(3deg);
+                }
+            }
+        }
+
+        @media (max-width: 768px) {
+            .clam-illustration {
+                width: 70px;
+                top: 18px;
+                right: 4%;
+            }
+
+            .shrimp-illustration {
+                width: 88px;
+                top: 12px;
+                right: 2%;
+            }
+
+            .roe-illustration {
+                width: 62px;
+                left: 1.5%;
+                bottom: 10px;
+            }
+
+            .fish-illustration {
+                width: 68px;
+                top: 16px;
+                right: 2%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .floating-illustration,
+            .hero-copy {
+                animation: none;
+            }
+
+            .quiz-track {
+                transition: none;
+            }
+
+            .quiz-icon img,
+            .hero-quiz-icon img {
+                animation: none;
+            }
+            .hero-quiz-track { transition: none; }
+        }
+    
+
+        /* ===== 海洋插圖美感微調：讓插圖成為卡片的一部分 ===== */
+        .home-hero .clam-illustration,
+        .home-hero .hero-shrimp-extra { display: none !important; }
+
+        .fisheries-section .shrimp-illustration,
+        .fisheries-section .fisheries-clam-extra,
+        .fisheries-section .fisheries-fish-extra { display: none !important; }
+
+        .fisheries-card.card-with-deco {
+            position: relative;
+            padding-top: 8px;
+        }
+        .county-frame-deco {
+            position: absolute;
+            z-index: 4;
+            width: 92px;
+            height: auto;
+            object-fit: contain;
+            pointer-events: none;
+            filter: drop-shadow(0 5px 5px rgba(39, 91, 112, .13));
+            animation: sea-float 4.8s ease-in-out infinite;
+        }
+        .card-clam-deco .county-frame-deco {
+            width: 91px;
+            top: -29px;
+            left: -8px;
+            transform: rotate(-13deg);
+            animation-delay: -.8s;
+        }
+        .card-shrimp-deco .county-frame-deco {
+            width: 112px;
+            top: -38px;
+            right: -19px;
+            transform: rotate(15deg);
+            animation-delay: -1.7s;
+        }
+        .card-fish-deco .county-frame-deco {
+            width: 88px;
+            top: -20px;
+            left: -19px;
+            transform: rotate(-8deg);
+            animation-delay: -2.2s;
+        }
+
+        /* 測驗區：大小錯落，不再左右對稱 */
+        .quiz-section .roe-illustration {
+            width: 128px;
+            left: auto;
+            right: 5.5%;
+            bottom: 17px;
+            transform: rotate(13deg);
+            animation-delay: -1.2s;
+        }
+        .quiz-section .quiz-shrimp-extra {
+            width: 102px;
+            left: 2.2%;
+            top: 46px;
+            transform: rotate(-17deg);
+            animation-delay: -2.1s;
+        }
+        .quiz-section .quiz-clam-extra {
+            width: 66px;
+            right: 12%;
+            bottom: 105px;
+            transform: rotate(11deg);
+            animation-delay: -.6s;
+        }
+        .quiz-section .quiz-fish-extra {
+            width: 76px;
+            left: 10%;
+            bottom: 35px;
+            top: auto;
+            right: auto;
+            transform: rotate(9deg);
+            animation-delay: -1.6s;
+        }
+
+        /* 新聞報導區：大小與位置刻意錯開，並用重複圖案串起整體 */
+        .documentary-section .fish-illustration {
+            width: 106px;
+            top: 35px;
+            right: 7%;
+            transform: rotate(12deg);
+            animation-delay: -1.4s;
+        }
+        .documentary-section .documentary-clam-extra {
+            width: 62px;
+            left: 8%;
+            bottom: 105px;
+            top: auto;
+            transform: rotate(-16deg);
+            animation-delay: -2.5s;
+        }
+        .documentary-section .documentary-roe-extra {
+            width: 100px;
+            right: 2%;
+            bottom: 35px;
+            transform: rotate(12deg);
+            animation-delay: -.7s;
+        }
+        .documentary-section .documentary-shrimp-extra {
+            width: 74px;
+            left: 2.5%;
+            top: 36px;
+            right: auto;
+            bottom: auto;
+            transform: rotate(-12deg);
+            animation-delay: -1.9s;
+        }
+
+        @media (max-width: 800px) {
+            .county-frame-deco { width: 68px; }
+            .card-clam-deco .county-frame-deco { width: 68px; top: -22px; left: -6px; }
+            .card-shrimp-deco .county-frame-deco { width: 82px; top: -27px; right: -11px; }
+            .card-fish-deco .county-frame-deco { width: 65px; top: -16px; left: -12px; }
+            .quiz-section .roe-illustration { width: 82px; right: 3%; bottom: 12px; }
+            .quiz-section .quiz-shrimp-extra { width: 72px; left: 1%; top: 38px; }
+            .quiz-section .quiz-clam-extra { width: 48px; right: 7%; bottom: 80px; }
+            .quiz-section .quiz-fish-extra { width: 55px; left: 5%; bottom: 24px; }
+            .documentary-section .fish-illustration { width: 72px; top: 28px; right: 5%; }
+            .documentary-section .documentary-clam-extra { width: 44px; left: 4%; bottom: 75px; }
+            .documentary-section .documentary-roe-extra { width: 70px; right: 1%; bottom: 24px; }
+            .documentary-section .documentary-shrimp-extra { width: 54px; left: 1%; top: 28px; }
+        }
+        @media (max-width: 420px) {
+            .card-clam-deco .county-frame-deco { width: 55px; top: -17px; left: -4px; }
+            .card-shrimp-deco .county-frame-deco { width: 68px; top: -22px; right: -7px; }
+            .card-fish-deco .county-frame-deco { width: 52px; top: -13px; left: -8px; }
+            .quiz-section .roe-illustration { width: 64px; }
+            .quiz-section .quiz-shrimp-extra { width: 58px; }
+            .quiz-section .quiz-clam-extra { width: 40px; }
+            .quiz-section .quiz-fish-extra { width: 44px; }
+            .documentary-section .fish-illustration { width: 58px; }
+            .documentary-section .documentary-clam-extra { width: 36px; }
+            .documentary-section .documentary-roe-extra { width: 55px; }
+            .documentary-section .documentary-shrimp-extra { width: 43px; }
+        }
+
+
+
+        /* ==================================================
+           分類區四張圖片：輕柔上下漂浮
+           使用 individual translate，避免覆蓋原本每張框圖的 scale 設定
+           ================================================== */
+        .fisheries-section .county-image-wrap {
+            animation: county-frame-float 4.2s ease-in-out infinite;
+            will-change: translate;
+        }
+
+        .fisheries-section .frame-roe {
+            animation-delay: 0s;
+        }
+
+        .fisheries-section .frame-clam {
+            animation-delay: -1.1s;
+        }
+
+        .fisheries-section .frame-shrimp {
+            animation-delay: -2.2s;
+        }
+
+        .fisheries-section .frame-fish {
+            animation-delay: -3.1s;
+        }
+
+        @keyframes county-frame-float {
+            0%, 100% { translate: 0 0; }
+            50% { translate: 0 -9px; }
+        }
+
+        /* 滑鼠移到分類圖片時稍微停住，方便點選 */
+        .fisheries-section .county-link:hover .county-image-wrap,
+        .fisheries-section .county-link:focus-visible .county-image-wrap {
+            animation-play-state: paused;
+        }
+
+        /* ===== 返回頁面頂端按鈕 ===== */
+        .back-to-top {
+            position: fixed;
+            right: 26px;
+            bottom: 26px;
+            z-index: 9999;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 50%;
+            background: #1d5963;
+            color: #ffffff;
+            font-size: 25px;
+            line-height: 1;
+            box-shadow: 0 5px 16px rgba(29, 89, 99, 0.25);
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(10px);
+            transition: opacity 0.25s ease, transform 0.25s ease,
+                        background 0.25s ease, visibility 0.25s ease;
+        }
+
+        .back-to-top.is-visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .back-to-top:hover {
+            background: #3185b9;
+            transform: translateY(-3px);
+        }
+
+        .back-to-top:focus-visible {
+            outline: 3px solid #80c8e8;
+            outline-offset: 4px;
+        }
+
+        @media (max-width: 600px) {
+            .back-to-top {
+                right: 16px;
+                bottom: 16px;
+                width: 44px;
+                height: 44px;
+                font-size: 22px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .fisheries-section .county-image-wrap {
+                animation: none;
+                translate: none;
+            }
+
+            .back-to-top {
+                transition: none;
+            }
+        }
+
+   /* ==================================================
+           第四板塊：關於我們
+           ================================================== */
+        .about-section {
+            padding: 78px 8% 88px;
+            background: linear-gradient(180deg, #e7f6ff 0%, #f0faff 100%);
+            text-align: center;
+        }
+        .about-heading { margin-bottom: 42px; }
+        .about-en-title {
+            margin-bottom: 10px;
+            color: #62849a;
+            font-size: 15px;
+            letter-spacing: 4px;
+        }
+        .about-heading h2 {
+            margin-bottom: 14px;
+            color: #1d5963;
+            font-family: "我的網站字體", "Noto Sans TC", sans-serif;
+            font-size: 42px;
+        }
+        .about-heading p {
+            color: #62849a;
+            font-size: 16px;
+            line-height: 1.9;
+        }
+        .member-grid {
+            width: 100%;
+            max-width: 1080px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 34px 28px;
+        }
+        .member-card {
+            padding: 22px 18px 24px;
+            border: 1px solid rgba(195, 232, 255, .9);
+            border-radius: 22px;
+            background: rgba(255,255,255,.92);
+            box-shadow: 0 10px 28px rgba(69, 146, 185, .10);
+            transition: transform .25s ease, box-shadow .25s ease;
+        }
+        .member-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 34px rgba(69, 146, 185, .16);
+        }
+        .member-photo {
+            display: block;
+            width: min(100%, 220px);
+            aspect-ratio: 1 / 1;
+            margin: 0 auto 18px;
+            border: 5px solid #e4f5ff;
+            border-radius: 50%;
+            background: #d9edf7;
+            object-fit: cover;
+        }
+        .member-card h3 {
+            margin-bottom: 7px;
+            color: #1d5963;
+            font-family: "我的網站字體", "Noto Sans TC", sans-serif;
+            font-size: 21px;
+        }
+        .member-role {
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 999px;
+            background: #e7f6ff;
+            color: #3979a8;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        @media (max-width: 800px) {
+            .about-section { padding: 62px 6% 70px; }
+            .about-heading h2 { font-size: 32px; }
+            .member-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 16px; }
+            .member-card { padding: 18px 12px 20px; }
+            .member-photo { width: min(100%, 180px); }
+        }
+        @media (max-width: 420px) {
+            .member-grid { gap: 16px 10px; }
+            .member-card { padding: 14px 8px 17px; border-radius: 16px; }
+            .member-photo { border-width: 3px; margin-bottom: 13px; }
+            .member-card h3 { font-size: 17px; }
+            .member-role { padding: 5px 11px; font-size: 12px; }
+        }
+
+
+        /* ===== 首頁主視覺圖片：手機版專用排版 ===== */
+        @media (max-width: 800px) {
+            .home-hero {
+                min-height: 1080px;
+                height: auto;
+                position: relative;
+                display: block;
+                overflow: hidden;
+                background: #d2e9ff;
+            }
+
+            /* 圖片集中在上半部，避免手機畫面把照片裁切得太嚴重 */
+            .home-hero .hero-image-wrap {
+                position: absolute;
+                inset: 0 0 auto;
+                width: 100%;
+                height: 440px;
+                overflow: hidden;
+            }
+
+            .home-hero .hero-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center 35%;
+                transform: none;
+            }
+
+            .home-hero .hero-image-wrap::after {
+                background: linear-gradient(
+                    to bottom,
+                    rgba(210, 233, 255, 0) 0%,
+                    rgba(210, 233, 255, .08) 42%,
+                    rgba(210, 233, 255, .78) 78%,
+                    #d2e9ff 100%
+                );
+            }
+
+            .home-hero .hero-copy {
+                position: relative;
+                z-index: 3;
+                width: 100%;
+                margin: 0;
+                padding: 340px 7% 350px;
+                animation: none;
+            }
+
+            .home-hero .hero-site-name {
+                margin-bottom: 14px;
+                font-size: 12px;
+            }
+
+            .home-hero .hero-copy h1 {
+                margin-bottom: 13px;
+                font-size: clamp(26px, 7vw, 34px);
+                line-height: 1.45;
+            }
+
+            .home-hero .hero-copy p {
+                font-size: 14px;
+                line-height: 1.9;
+            }
+
+            .home-hero .hero-read-more {
+                margin-top: 17px;
+            }
+
+            .home-hero .hero-quiz {
+                top: auto;
+                right: 6%;
+                bottom: 28px;
+                left: 6%;
+                width: 88%;
+                max-width: none;
+                margin: 0;
+                padding: 16px 18px 12px;
+                transform: none;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .home-hero {
+                min-height: 1040px;
+            }
+
+            .home-hero .hero-image-wrap {
+                height: 390px;
+            }
+
+            .home-hero .hero-image {
+                object-position: center 32%;
+            }
+
+            .home-hero .hero-copy {
+                padding: 305px 7% 345px;
+            }
+
+            .home-hero .hero-copy h1 {
+                font-size: 27px;
+            }
+
+            .home-hero .hero-copy p {
+                font-size: 13px;
+            }
+
+            .home-hero .hero-quiz {
+                bottom: 22px;
+                padding: 14px 15px 11px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+    <!-- ===== 頂部導覽列 ===== -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="浪下真相">
+        </a>
+
+        <button class="menu-btn" id="menuBtn" aria-label="開啟選單">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+
+
+
+    <!-- ===== 第一個首頁版塊：首頁主視覺 ===== -->
+    <!-- ===== 首頁頂部輪播：主視覺一張、每個測驗各一張 ===== -->
+    <section class="top-feature-carousel" id="topFeatureCarousel" aria-label="首頁主視覺與測驗輪播">
+        <div class="top-feature-viewport">
+            <div class="top-feature-track" id="topFeatureTrack">
+                <!-- 第 1 張：主視覺 -->
+                <div class="top-feature-slide">
+                    <section class="home-hero">
+                        <div class="hero-image-wrap">
+                            <img class="hero-image" src="首頁圖.png" alt="浪下真相首頁主視覺">
+                        </div>
+                        <a href="article1.html" class="hero-copy">
+                            <div class="hero-site-name">浪下真相</div>
+                            <h1>記錄並見證轉型力量</h1>
+                            <p>
+                                「浪下真相」此網站建立的目的，便是想向讀者呈現時下台灣養殖漁業的發展，
+                                透過聚焦於特定的水產品種，展現養殖業者的轉型力量，
+                                看著他們是如何一步步面對外界所帶來的挑戰。
+                            </p>
+                            <div class="hero-read-more">探索漁業轉型故事 <span aria-hidden="true">→</span></div>
+                        </a>
+                    </section>
+                </div>
+
+                <!-- 第 2 張：漁業知識小測驗，獨立一張 -->
+                <div class="top-feature-slide top-feature-quiz-slide">
+                    <div class="top-feature-quiz-card">
+                        <div class="top-feature-quiz-kicker">OCEAN QUIZ · 01</div>
+                        <div class="top-feature-quiz-icon"><img src="蛤蠣插圖.png" alt="蛤蠣插圖"></div>
+                        <h2>漁事知多少</h2>
+                        <p>你對台灣的養殖漁業了解多少？一起挑戰有趣的漁業知識，看看自己能答對多少題！</p>
+                        <a href="testindex.html" class="top-feature-quiz-link">開始知識挑戰 <span aria-hidden="true">→</span></a>
+                    </div>
+                </div>
+
+                <!-- 第 3 張：魚群性格測驗，獨立一張 -->
+                <div class="top-feature-slide top-feature-quiz-slide">
+                    <div class="top-feature-quiz-card">
+                        <div class="top-feature-quiz-kicker">OCEAN QUIZ · 02</div>
+                        <div class="top-feature-quiz-icon"><img src="魚插圖.png" alt="魚插圖"></div>
+                        <h2>海底撈撈撈</h2>
+                        <p>如果你是一種魚，會是哪一種？透過幾道趣味問題，探索屬於你的魚群性格！</p>
+                        <a href="game.html" class="top-feature-quiz-link">探索我的魚群性格 <span aria-hidden="true">→</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="top-feature-controls">
+            <button type="button" id="topFeaturePrev" aria-label="上一張">‹</button>
+            <div class="top-feature-dots" aria-label="選擇首頁輪播頁面">
+                <button type="button" class="top-feature-dot active" aria-label="主視覺"></button>
+                <button type="button" class="top-feature-dot" aria-label="漁業知識小測驗"></button>
+                <button type="button" class="top-feature-dot" aria-label="魚群性格測驗"></button>
+            </div>
+            <button type="button" id="topFeatureNext" aria-label="下一張">›</button>
+        </div>
+    </section>
+
+    <!-- ===== 第二個首頁版塊：縣市報導分類 ===== -->
+    <section class="fisheries-section">
+
+        <div class="fisheries-text">
+            <div class="fisheries-label">STORIES FROM THE COAST</div>
+
+            <h2 class="fisheries-title">走進各地</h2>
+
+            <p class="fisheries-description">
+                從不同縣市的養殖場出發，看看在地業者如何面對環境與產業挑戰，
+                <br>
+                也一起記錄那些正在發生的轉型故事。
+            </p>
+        </div>
+
+        <div class="fisheries-cards">
+            <div class="fisheries-card">
+                <a class="county-link" href="article2.html">
+                    <div class="county-image-wrap frame-roe">
+                        <img class="county-frame" src="烏魚子框圖.png" alt="" aria-hidden="true">
+                    </div>
+                    <h3>雲林｜烏魚</h3>
+                </a>
+            </div>
+
+            <div class="fisheries-card">
+                <a class="county-link" href="article3.html">
+                    <div class="county-image-wrap frame-clam">
+                        <img class="county-frame" src="蛤蠣框圖.png" alt="" aria-hidden="true">
+                    </div>
+                    <h3>彰化｜貝類</h3>
+                </a>
+            </div>
+
+            <div class="fisheries-card">
+                <a class="county-link" href="article4.html">
+                    <div class="county-image-wrap frame-shrimp">
+                        <img class="county-frame" src="蝦子框圖.png" alt="" aria-hidden="true">
+                    </div>
+                    <h3>嘉義｜白蝦</h3>
+                </a>
+            </div>
+
+            <div class="fisheries-card">
+                <a class="county-link" href="article5.html">
+                    <div class="county-image-wrap frame-fish">
+                        <img class="county-frame" src="魚框圖.png" alt="" aria-hidden="true">
+                    </div>
+                    <h3>宜蘭｜香魚</h3>
+                </a>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ==================================================
+         新增區塊：測驗自動輪播
+         測驗一：testindex.html
+         測驗二：game.html
+         ================================================== -->
+    <section class="quiz-section" id="quizSection">
+
+        <div class="quiz-heading">
+            <div class="quiz-en-title">EXPLORE THE OCEAN</div>
+            <h2>海洋探索小站</h2>
+            <p>
+                從趣味測驗出發，探索漁業知識，也發現屬於你的魚群性格。
+            </p>
+        </div>
+
+        <div class="quiz-carousel" id="quizCarousel">
+
+            <button
+                type="button"
+                class="quiz-arrow quiz-prev"
+                id="quizPrev"
+                aria-label="上一個測驗"
+            >
+                &#10094;
+            </button>
+
+            <div class="quiz-viewport">
+                <div class="quiz-track" id="quizTrack">
+
+                    <!-- 第一張：漁業知識小測驗 -->
+                    <div class="quiz-slide">
+                        <article class="quiz-card">
+                            <div class="quiz-icon" aria-hidden="true">
+                                <img src="蛤蠣插圖.png" alt="">
+                            </div>
+
+                            <h3>漁事知多少</h3>
+
+                            <p>
+                                你對台灣的養殖漁業了解多少？
+                                一起挑戰有趣的漁業知識，看看自己能答對多少題！
+                            </p>
+
+                            <a href="testindex.html" class="quiz-link">
+                                開始知識挑戰
+                                <span aria-hidden="true">→</span>
+                            </a>
+                        </article>
+                    </div>
+
+                    <!-- 第二張：魚群性格測驗 -->
+                    <div class="quiz-slide">
+                        <article class="quiz-card">
+                            <div class="quiz-icon" aria-hidden="true">
+                                <img src="魚插圖.png" alt="">
+                            </div>
+
+                            <h3>海底撈撈撈</h3>
+
+                            <p>
+                                如果你是一種魚，會是哪一種呢？
+                                回答幾個趣味問題，找出最符合你的魚群性格！
+                            </p>
+
+                            <a href="game.html" class="quiz-link">
+                                探索我的魚群性格
+                                <span aria-hidden="true">→</span>
+                            </a>
+                        </article>
+                    </div>
+
+                </div>
+            </div>
+
+            <button
+                type="button"
+                class="quiz-arrow quiz-next"
+                id="quizNext"
+                aria-label="下一個測驗"
+            >
+                &#10095;
+            </button>
+
+        </div>
+
+        <div class="quiz-dots" aria-label="選擇測驗">
+            <button
+                type="button"
+                class="quiz-dot active"
+                aria-label="顯示漁業知識小測驗"
+                aria-current="true"
+            ></button>
+
+            <button
+                type="button"
+                class="quiz-dot"
+                aria-label="顯示魚群性格測驗"
+                aria-current="false"
+            ></button>
+        </div>
+
+        <p class="quiz-hint">左右滑動或點選箭頭，探索不同測驗</p>
+
+    </section>
+
+    <!-- ===== 第三板塊：新聞報導 ===== -->
+    <section class="documentary-section">
+
+        <div class="documentary-title">
+            <div class="en-title">VIDEO</div>
+            <h2>新聞報導</h2>
+            <p>透過我們的鏡頭看見漁民、產業與土地的故事。</p>
+        </div>
+
+        <br>
+        <br>
+
+        <div class="video-carousel">
+            <button
+                class="video-arrow video-prev"
+                id="videoPrev"
+                aria-label="上一部影片"
+            >
+                &#10094;
+            </button>
+
+            <div class="video-container">
+                <div class="video-slide active">
+                    <iframe
+                        src="https://www.youtube.com/embed/你的影片ID1"
+                        title="新聞報導 1"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+
+                <div class="video-slide">
+                    <iframe
+                        src="https://www.youtube.com/embed/你的影片ID2"
+                        title="新聞報導 2"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+
+                <div class="video-slide">
+                    <iframe
+                        src="https://www.youtube.com/embed/你的影片ID3"
+                        title="紀實影片 3"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+
+            <button
+                class="video-arrow video-next"
+                id="videoNext"
+                aria-label="下一部影片"
+            >
+                &#10095;
+            </button>
+        </div>
+
+        <div class="video-dots">
+            <button class="video-dot active" aria-label="第 1 部影片"></button>
+            <button class="video-dot" aria-label="第 2 部影片"></button>
+            <button class="video-dot" aria-label="第 3 部影片"></button>
+        </div>
+
+        <a href="article7.html" class="documentary-btn">查看完整新聞</a>
+    </section>
+         
+         <!-- ===== 第四板塊：關於我們 ===== -->
+    <section class="about-section" id="aboutUs">
+        <div class="about-heading">
+            <div class="about-en-title">MEET OUR TEAM</div>
+            <h2>關於我們</h2>
+            <p>六位成員，一起走進漁業現場，記錄產業轉型的每一個故事。</p>
+        </div>
+
+        <div class="member-grid">
+            <article class="member-card">
+                <img class="member-photo" src="member1.jpg" alt="成員一照片">
+                <h3>吳尚恩</h3>
+                <div class="member-role">小編 網站架設 採訪拍攝</div>
+            </article>
+            <article class="member-card">
+                <img class="member-photo" src="member2.jpg" alt="成員二照片">
+                <h3>黃心妤</h3>
+                <div class="member-role">小編 網站架設 採訪拍攝</div>
+            </article>
+            <article class="member-card">
+                <img class="member-photo" src="member3.jpg" alt="成員三照片">
+                <h3>鄭文書</h3>
+                <div class="member-role">職稱待填</div>
+            </article>
+            <article class="member-card">
+                <img class="member-photo" src="member4.jpg" alt="成員四照片">
+                <h3>彭昀慧</h3>
+                <div class="member-role">職稱待填</div>
+            </article>
+            <article class="member-card">
+                <img class="member-photo" src="member5.jpg" alt="成員五照片">
+                <h3>張恩綺</h3>
+                <div class="member-role">職稱待填</div>
+            </article>
+            <article class="member-card">
+                <img class="member-photo" src="member6.jpg" alt="成員六照片">
+                <h3>陳姵甄</h3>
+                <div class="member-role">職稱待填</div>
+            </article>
+        </div>
+    </section>
+
+    <!-- ===== 遮罩 ===== -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- ===== 側邊選單 ===== -->
+    <aside class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <h2>網站選單</h2>
+            <button class="close-btn" id="closeBtn" aria-label="關閉選單">×</button>
+        </div>
+
+        <ul class="menu-list">
+            <li>
+                <a href="index.html">
+                    <span>首頁</span>
+                </a>
+            </li>
+
+            <li>
+                <button class="submenu-btn" id="articleBtn">
+                    <span>專題文章</span>
+                    <span class="arrow">▼</span>
+                </button>
+
+                <ul class="submenu" id="articleSubmenu">
+                    <li><a href="article1.html">漁業困境概括</a></li>
+                    <li><a href="article2.html">烏魚</a></li>
+                    <li><a href="article3.html">貝類</a></li>
+                    <li><a href="article4.html">白蝦</a></li>
+                    <li><a href="article5.html">香魚</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="testindex.html"><span>漁事知多少</span></a>
+            </li>
+
+            <li>
+                <a href="game.html"><span>海底撈撈撈</span></a>
+            </li>
+
+            <li>
+                <a href="article7.html"><span>新聞報導</span></a>
+            </li>
+
+            <li>
+                <a href="#aboutUs"><span>關於我們</span></a>
+            </li>
+        </ul>
+    </aside>
+
+
+
+    <!-- ===== 返回頁面頂端按鈕 ===== -->
+    <button type="button" class="back-to-top" id="backToTop" aria-label="返回頁面頂端" title="返回頂端">
+        ↑
+    </button>
+
+    <!-- ===== JavaScript ===== -->
+    <script>
+        /* ===== 側邊選單：保留原功能 ===== */
+        const menuBtn = document.getElementById("menuBtn");
+        const closeBtn = document.getElementById("closeBtn");
+        const sideMenu = document.getElementById("sideMenu");
+        const overlay = document.getElementById("overlay");
+        const articleBtn = document.getElementById("articleBtn");
+        const articleSubmenu = document.getElementById("articleSubmenu");
+
+        function closeMenu() {
+            sideMenu.classList.remove("active");
+            overlay.classList.remove("active");
+        }
+
+        menuBtn.addEventListener("click", function () {
+            sideMenu.classList.add("active");
+            overlay.classList.add("active");
+        });
+
+        closeBtn.addEventListener("click", closeMenu);
+        overlay.addEventListener("click", closeMenu);
+
+        articleBtn.addEventListener("click", function () {
+            articleSubmenu.classList.toggle("active");
+            articleBtn.classList.toggle("active");
+        });
+
+
+        /* ===== 頂部輪播：主視覺、知識測驗、性格測驗各自一張 ===== */
+        (function () {
+            const carousel = document.getElementById("topFeatureCarousel");
+            const track = document.getElementById("topFeatureTrack");
+            if (!carousel || !track) return;
+            const slides = track.querySelectorAll(".top-feature-slide");
+            const dots = carousel.querySelectorAll(".top-feature-dot");
+            const prev = document.getElementById("topFeaturePrev");
+            const next = document.getElementById("topFeatureNext");
+            let current = 0, timer = null, touchStartX = 0;
+            function show(index) {
+                current = (index + slides.length) % slides.length;
+                track.style.transform = "translateX(-" + (current * 100) + "%)";
+                dots.forEach((dot, i) => dot.classList.toggle("active", i === current));
+            }
+            function stop() { if (timer !== null) { clearInterval(timer); timer = null; } }
+            function start() {
+                stop();
+                // 固定每 5 秒自動切換主視覺、知識測驗、性格測驗
+                if (!document.hidden) timer = setInterval(() => show(current + 1), 5000);
+            }
+            prev.addEventListener("click", () => { show(current - 1); start(); });
+            next.addEventListener("click", () => { show(current + 1); start(); });
+            dots.forEach((dot, i) => dot.addEventListener("click", () => { show(i); start(); }));
+            // 滑鼠停在輪播上也會持續自動切換；點箭頭或圓點後重新計時
+            carousel.addEventListener("focusout", event => { if (!carousel.contains(event.relatedTarget)) start(); });
+            carousel.addEventListener("touchstart", event => { touchStartX = event.changedTouches[0].clientX; stop(); }, { passive: true });
+            carousel.addEventListener("touchend", event => {
+                const delta = event.changedTouches[0].clientX - touchStartX;
+                if (Math.abs(delta) > 45) show(current + (delta < 0 ? 1 : -1));
+                start();
+            }, { passive: true });
+            document.addEventListener("visibilitychange", () => document.hidden ? stop() : start());
+            start();
+        })();
+
+        /* ==================================================
+           測驗輪播
+           每 5 秒自動切換，可使用箭頭和圓點控制
+           ================================================== */
+        const quizCarousel = document.getElementById("quizCarousel");
+        const quizTrack = document.getElementById("quizTrack");
+        const quizSlides = document.querySelectorAll(".quiz-slide");
+        const quizDots = document.querySelectorAll(".quiz-dot");
+        const quizPrev = document.getElementById("quizPrev");
+        const quizNext = document.getElementById("quizNext");
+
+        let currentQuiz = 0;
+        let quizTimer = null;
+        const quizInterval = 5000;
+
+        function showQuiz(index) {
+            if (index >= quizSlides.length) {
+                currentQuiz = 0;
+            } else if (index < 0) {
+                currentQuiz = quizSlides.length - 1;
+            } else {
+                currentQuiz = index;
+            }
+
+            quizTrack.style.transform =
+                "translateX(-" + (currentQuiz * 100) + "%)";
+
+            quizDots.forEach(function (dot, i) {
+                const isActive = i === currentQuiz;
+                dot.classList.toggle("active", isActive);
+                dot.setAttribute("aria-current", isActive ? "true" : "false");
+            });
+        }
+
+        function nextQuiz() {
+            showQuiz(currentQuiz + 1);
+        }
+
+        function prevQuiz() {
+            showQuiz(currentQuiz - 1);
+        }
+
+        function startQuizAutoplay() {
+            stopQuizAutoplay();
+
+            if (
+                window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ) {
+                return;
+            }
+
+            quizTimer = setInterval(nextQuiz, quizInterval);
+        }
+
+        function stopQuizAutoplay() {
+            if (quizTimer !== null) {
+                clearInterval(quizTimer);
+                quizTimer = null;
+            }
+        }
+
+        quizPrev.addEventListener("click", function () {
+            prevQuiz();
+            startQuizAutoplay();
+        });
+
+        quizNext.addEventListener("click", function () {
+            nextQuiz();
+            startQuizAutoplay();
+        });
+
+        quizDots.forEach(function (dot, index) {
+            dot.addEventListener("click", function () {
+                showQuiz(index);
+                startQuizAutoplay();
+            });
+        });
+
+        /* 滑鼠移入輪播區時暫停，移開後繼續 */
+        quizCarousel.addEventListener("mouseenter", stopQuizAutoplay);
+        quizCarousel.addEventListener("mouseleave", startQuizAutoplay);
+
+        /* 鍵盤操作時暫停，離開焦點後重新啟動 */
+        quizCarousel.addEventListener("focusin", stopQuizAutoplay);
+        quizCarousel.addEventListener("focusout", function (event) {
+            if (!quizCarousel.contains(event.relatedTarget)) {
+                startQuizAutoplay();
+            }
+        });
+
+        /* 切換分頁或視窗時，避免背景持續輪播 */
+        document.addEventListener("visibilitychange", function () {
+            if (document.hidden) {
+                stopQuizAutoplay();
+            } else {
+                startQuizAutoplay();
+            }
+        });
+
+        /* 支援減少動態效果的使用者設定 */
+        const reducedMotionQuery = window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        );
+
+        function handleReducedMotionChange() {
+            if (reducedMotionQuery.matches) {
+                stopQuizAutoplay();
+            } else {
+                startQuizAutoplay();
+            }
+        }
+
+        if (reducedMotionQuery.addEventListener) {
+            reducedMotionQuery.addEventListener(
+                "change",
+                handleReducedMotionChange
+            );
+        }
+
+        showQuiz(0);
+        startQuizAutoplay();
+
+        /* ==================================================
+           新聞報導輪播：保留原功能
+           ================================================== */
+        const videoSlides = document.querySelectorAll(".video-slide");
+        const videoDots = document.querySelectorAll(".video-dot");
+        const videoPrev = document.getElementById("videoPrev");
+        const videoNext = document.getElementById("videoNext");
+
+        let currentVideo = 0;
+
+        function showVideo(index) {
+            if (index >= videoSlides.length) {
+                currentVideo = 0;
+            } else if (index < 0) {
+                currentVideo = videoSlides.length - 1;
+            } else {
+                currentVideo = index;
+            }
+
+            videoSlides.forEach(function (slide) {
+                slide.classList.remove("active");
+            });
+
+            videoDots.forEach(function (dot) {
+                dot.classList.remove("active");
+            });
+
+            videoSlides[currentVideo].classList.add("active");
+            videoDots[currentVideo].classList.add("active");
+        }
+
+        videoPrev.addEventListener("click", function () {
+            showVideo(currentVideo - 1);
+        });
+
+        videoNext.addEventListener("click", function () {
+            showVideo(currentVideo + 1);
+        });
+
+        videoDots.forEach(function (dot, index) {
+            dot.addEventListener("click", function () {
+                showVideo(index);
+            });
+        });
+
+
+        /* ===== 返回頂端：往下滑一段距離後顯示 ===== */
+        (function () {
+            const backToTop = document.getElementById("backToTop");
+            if (!backToTop) return;
+
+            function updateBackToTop() {
+                backToTop.classList.toggle("is-visible", window.scrollY > 300);
+            }
+
+            window.addEventListener("scroll", updateBackToTop, { passive: true });
+            updateBackToTop();
+
+            backToTop.addEventListener("click", function () {
+                window.scrollTo({
+                    top: 0,
+                    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                        ? "auto"
+                        : "smooth"
+                });
+            });
+        })();
+
+    </script>
+
+    <!-- 版權頁 -->
+    <footer id="copyright" class="copyright-section">
+        <div class="copyright-container">
+            <div class="copyright-brand">
+                <h2>浪下真相</h2>
+                <p class="copyright-slogan">探索漁業的故事，看見海洋的未來</p>
+            </div>
+
+            <div class="copyright-bottom">
+                <p class="copyright-contact">
+                    <svg class="copyright-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                        <circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                    </svg>
+                    <span>433台中市沙鹿區台灣大道七段200號</span>
+                </p>
+                <p class="copyright-contact">
+                    <svg class="copyright-icon instagram-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                        <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                        <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/>
+                    </svg>
+                    <span>under.thesea666</span>
+                </p>
+                <p><span class="contact-icon" aria-hidden="true">✉️</span><span>undertheseao619@gmail.comuts52024708</span></p>
+                <p>© 2026 浪下真相 All Rights Reserved.</p>
+                <p>靜宜大學大眾傳播學系畢業專題製作</p>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        /* 版權頁樣式：直式排列 */
+        .copyright-section {
+            width: 100%;
+            background: linear-gradient(135deg, #164e68, #0d3b52);
+            color: #fff;
+            padding: 48px 24px 28px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .copyright-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+        }
+        .copyright-brand h2 {
+            color: #fff;
+            font-size: 32px;
+            letter-spacing: 6px;
+            margin: 0 0 10px;
+        }
+        .copyright-slogan {
+            color: #c5e5ef;
+            font-size: 14px;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+        .copyright-bottom {
+            width: 100%;
+            border-top: 1px solid rgba(255,255,255,.25);
+            padding-top: 18px;
+            color: #c5e0e9;
+            font-size: 12px;
+            line-height: 1.9;
+        }
+        .copyright-bottom p { margin: 4px 0; }
+        .copyright-contact {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+        }
+        .copyright-icon {
+            width: 17px;
+            height: 17px;
+            flex: 0 0 17px;
+            color: #c5e0e9;
+        }
+        .instagram-icon { width: 18px; height: 18px; }
+        @media (max-width: 768px) {
+            .copyright-section { padding: 38px 18px 22px; }
+            .copyright-brand h2 { font-size: 27px; }
+        }
+
+         </style>
+
+</body>
+</html>
